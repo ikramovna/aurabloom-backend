@@ -12,13 +12,13 @@ This guide will help you set up the project on your local machine for developmen
 1. Clone the repository to your local machine:
 
 ```bash
-git clone https://gitlab.com/firewise.uz/beauty-backend.git
+https://github.com/ikramovna/aurabloom-backend.git
 ```
 
 2. Navigate to the project directory:
 
 ```bash
-cd beauty-backend
+cd aurabloom-backend
 ```
 
 3. It's recommended to create a virtual environment to isolate your project and avoid version conflicts with packages.
