@@ -103,5 +103,5 @@ class ShopFavoriteModelAdmin(ImportExportModelAdmin):
 
 @admin.register(Blog)
 class BlogModelAdmin(ImportExportModelAdmin):
-    list_display = ("id", "title", "description", "image1", "image2", "image3", "image4", "created_at")
+    list_display = ("id", "title", "description", "image1", "image2", "image3", "image4", "created_at", "view")
     ordering = ("id",)

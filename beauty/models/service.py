@@ -38,7 +38,13 @@ class Shop(Model):
     name = CharField(max_length=255)
     description = TextField(null=True, blank=True)
     image = ImageField(upload_to='shop/')
+    image1 = ImageField(upload_to='shop/', null=True, blank=True)
+    image2 = ImageField(upload_to='shop/', null=True, blank=True)
+    image3 = ImageField(upload_to='shop/', null=True, blank=True)
     price = DecimalField(max_digits=10, decimal_places=2)
+    view = IntegerField(default=0)
+    brand = CharField(max_length=255, null=True, blank=True)
+    availability = BooleanField(default=True)
 
     class Meta:
         verbose_name = 'Shop'
@@ -57,6 +63,7 @@ class Blog(Model):
     image3 = ImageField(upload_to='blog/', null=True, blank=True)
     image4 = ImageField(upload_to='blog/', null=True, blank=True)
     created_at = DateTimeField(auto_now_add=True)
+    view = IntegerField(default=0)
 
     class Meta:
         verbose_name = 'Blog'

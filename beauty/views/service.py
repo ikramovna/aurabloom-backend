@@ -2,13 +2,14 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.filters import SearchFilter
-from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListAPIView, CreateAPIView
+from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListAPIView, CreateAPIView, RetrieveAPIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import AllowAny
 
 from beauty.models.service import Category, Service, Shop, Blog
 from beauty.serializers.service import (CategoryModelSerializer, ServiceModelSerializer, ServiceListSerializer,
-                                        ShopModelSerializer, BlogModelSerializer)
+                                        ShopModelSerializer, BlogModelSerializer, BlogDetailModelSerializer,
+                                        ShopDetailModelSerializer)
 
 
 class CategoryListCreateAPIView(ListAPIView):
@@ -144,6 +145,20 @@ class ShopListAPIView(ListAPIView):
     # search_fields = ['name', 'user__username', 'category__name']
 
 
+class ShopRetrieveAPIView(RetrieveAPIView):
+    """
+    API for retrieving a shop and incrementing the view count
+    """
+    queryset = Shop.objects.all()
+    serializer_class = ShopDetailModelSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.view += 1
+        instance.save()
+        return super().retrieve(request, *args, **kwargs)
+
+
 class BlogListAPIView(ListAPIView):
     """
     API for listing all blogs
@@ -152,3 +167,19 @@ class BlogListAPIView(ListAPIView):
     """
     queryset = Blog.objects.all()
     serializer_class = BlogModelSerializer
+
+
+class BlogRetrieveApiView(RetrieveAPIView):
+    """
+    API for retrieving a blog
+
+    Example Request Body:
+    """
+    queryset = Blog.objects.all()
+    serializer_class = BlogDetailModelSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.view += 1
+        instance.save()
+        return super().retrieve(request, *args, **kwargs)

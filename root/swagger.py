@@ -7,10 +7,10 @@ schema_view = get_schema_view(
     openapi.Info(
         title="AURA BLOOM API",
         default_version='v1',
-        description="**Created by Zokirjonova Muslima TM221-207**\n\n**AURA BLOOM API Documentation**\n\n**Version 1.0**",
+        description="**Created by Zokirjonova Muslima 24835737**\n\n**AURA BLOOM API Documentation**\n\n**Version 1.0**",
         terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(email="contact@snippets.local"),
-        license=openapi.License(name="Zokirjonova Muslima TM221-207"),
+        license=openapi.License(name="Zokirjonova Muslima 24835737"),
     ),
     public=True,
     permission_classes=[permissions.AllowAny],

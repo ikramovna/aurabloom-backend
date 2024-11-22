@@ -9,7 +9,7 @@ from beauty.views.favorite import (FavoriteListCreateAPIView, SavedListCreateAPI
 from beauty.views.region import RegionListAPIView, DistrictListAPIView, MahallaListAPIView
 from beauty.views.service import (CategoryListCreateAPIView, ServiceCreateAPIView,
                                   ServiceRetrieveUpdateDestroyAPIView, ServiceListAPIView, ServiceByCategoryAPIView,
-                                  ShopListAPIView, BlogListAPIView)
+                                  ShopListAPIView, BlogListAPIView, BlogRetrieveApiView, ShopRetrieveAPIView)
 
 urlpatterns = [
     path("region", RegionListAPIView.as_view()),
@@ -32,8 +32,10 @@ urlpatterns = [
     path("about", AboutAPIView.as_view()),
     path("category/service", ServiceByCategoryAPIView.as_view()),
     path("shop", ShopListAPIView.as_view()),
+    path("shop/<int:pk>", ShopRetrieveAPIView.as_view()),
     path("shop/favorite", ShopFavoriteListCreateAPIView.as_view()),
     path("shop/saved", ShopSavedListCreateAPIView.as_view()),
     path("blog", BlogListAPIView.as_view()),
+    path("blog/<int:pk>", BlogRetrieveApiView.as_view()),
 
 ]

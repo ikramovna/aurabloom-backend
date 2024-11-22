@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
 from beauty.models.favorite import Favorite, Saved, ShopFavorite
-from beauty.models.service import Category, Service, Blog
+from beauty.models.service import Category, Service, Blog, Shop
 from users.serializers import UserServiceModelSerializer
 
 
@@ -58,15 +58,30 @@ class ServiceListSerializer(ModelSerializer):
 
 class ShopModelSerializer(ModelSerializer):
     like_count = serializers.SerializerMethodField()
+
     class Meta:
-        model = Service
-        fields = ('id', 'name', 'price', 'description', 'image', 'like_count')
+        model = Shop
+        fields = ('id', 'name', 'price', 'image', 'like_count', 'view')
 
     def get_like_count(self, obj):
         return ShopFavorite.objects.filter(product=obj).count()
 
 
+class ShopDetailModelSerializer(ModelSerializer):
+    class Meta:
+        model = Shop
+        fields = (
+            'id', 'name', 'price', 'description', 'image', 'image1', 'image2', 'image3', 'brand', 'availability',
+            'view')
+
+
+class BlogDetailModelSerializer(ModelSerializer):
+    class Meta:
+        model = Blog
+        fields = ('id', 'title', 'description', 'image1', 'image2', 'image3', 'image4', 'created_at', 'view')
+
+
 class BlogModelSerializer(ModelSerializer):
     class Meta:
         model = Blog
-        fields = ('id', 'title', 'description', 'image1', 'image2', 'image3', 'image4', 'created_at')
+        fields = ('id', 'title', 'description', 'image1', 'created_at', 'view')
