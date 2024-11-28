@@ -25,6 +25,7 @@ THIRD_PARTY_APPS = [
     'django_filters',
     'rest_framework_simplejwt',
     'mptt',
+    'ckeditor',
 ]
 
 INSTALLED_APPS = [
@@ -223,6 +224,14 @@ CACHES = {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
         }
     }
+}
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+        'height': 300,
+        'width': 'auto',
+    },
 }
 
 

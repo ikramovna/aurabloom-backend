@@ -1,5 +1,5 @@
 from django.db.models import *
-
+from ckeditor.fields import RichTextField
 
 class Faq(Model):
     question = CharField(max_length=255)
@@ -28,7 +28,7 @@ class AboutImage(Model):
 
 class About(Model):
     title = CharField(max_length=255)
-    description = TextField()
+    description = RichTextField()
     image = ManyToManyField(AboutImage, blank=True)
 
     class Meta:
