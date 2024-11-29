@@ -27,7 +27,7 @@ class ServiceByCategoryAPIView(ListAPIView):
     """
     API for listing services by category
     """
-    serializer_class = ServiceModelSerializer
+    serializer_class = ServiceListSerializer
 
     @swagger_auto_schema(
         manual_parameters=[

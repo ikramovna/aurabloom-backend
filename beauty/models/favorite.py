@@ -38,8 +38,8 @@ class Saved(models.Model):
 
 
 class ShopFavorite(models.Model):
-    product = models.ForeignKey('Shop', on_delete=models.CASCADE)
-    user = models.ForeignKey('users.User', on_delete=models.CASCADE)
+    product = models.ForeignKey('Shop', on_delete=models.CASCADE, related_name='favorites')
+    user = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='favorites')
     like = models.BooleanField(default=False)
 
     class Meta:

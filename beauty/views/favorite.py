@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from beauty.models.favorite import Favorite, Saved, ShopFavorite, ShopSaved
+from beauty.models.service import Shop
 from beauty.serializers.favorite import FavoriteSerializer, SavedSerializer, ShopFavoriteSerializer, ShopSavedSerializer
 
 
@@ -107,25 +108,30 @@ class ShopFavoriteListCreateAPIView(ListCreateAPIView):
         user = self.request.user
         return ShopFavorite.objects.filter(user=user)
 
-    def get_likes_count(self, shop_id):
-        return ShopFavorite.objects.filter(shop_id=shop_id, like=True).count()
+    def get_likes_count(self, shop):
+        return ShopFavorite.objects.filter(shop=shop, like=True).count()
 
     def post(self, request, *args, **kwargs):
         shop_id = request.data.get('shop')
         user = request.user
         like_value = request.data.get('like', True)
 
+        try:
+            shop = Shop.objects.get(id=shop_id)
+        except Shop.DoesNotExist:
+            return Response({'error': 'Shop not found'}, status=404)
+
         if like_value is False:
-            ShopFavorite.objects.filter(shop_id=shop_id, user=user).delete()
+            ShopFavorite.objects.filter(shop=shop, user=user).delete()
             return Response({
                 'id': user.id,
                 'shop': shop_id,
                 'like': False,
-                'message': 'Favorite  deleted successfully'
+                'message': 'Favorite deleted successfully'
             })
 
         favorite_instance, created = ShopFavorite.objects.get_or_create(
-            shop_id=shop_id,
+            shop=shop,
             user=user,
             defaults={'like': like_value}
         )
@@ -134,12 +140,13 @@ class ShopFavoriteListCreateAPIView(ListCreateAPIView):
             favorite_instance.like = like_value
             favorite_instance.save()
 
-        likes_count = self.get_likes_count(shop_id)
+        likes_count = self.get_likes_count(shop)
         serializer = self.get_serializer(favorite_instance)
         response_data = serializer.data
         response_data['likes_count'] = likes_count
-        response_data['message'] = 'Favorite  created successfully'
+        response_data['message'] = 'Favorite created successfully'
         return Response(response_data)
+
 
 
 class ShopSavedListCreateAPIView(ListCreateAPIView):
