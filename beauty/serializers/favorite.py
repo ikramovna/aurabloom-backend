@@ -45,10 +45,10 @@ class ShopFavoriteSerializer(serializers.ModelSerializer):
         fields = ('id', 'product', 'user', 'like')
 
     def validate(self, attrs):
-        shop = attrs.get('product')
+        product = attrs.get('product')
         user = attrs.get('user')
 
-        if ShopFavorite.objects.filter(shop=shop, user=user).exists():
+        if ShopFavorite.objects.filter(product=product, user=user).exists():
             raise serializers.ValidationError('You have already added this shop to your favorites.')
 
         return attrs
@@ -62,10 +62,10 @@ class ShopSavedSerializer(serializers.ModelSerializer):
         fields = ('id', 'product', 'user', 'saved')
 
     def validate(self, attrs):
-        shop = attrs.get('product')
+        product = attrs.get('product')
         user = attrs.get('user')
 
-        if ShopSaved.objects.filter(shop=shop, user=user).exists():
+        if ShopSaved.objects.filter(product=product, user=user).exists():
             raise serializers.ValidationError('You have already saved this shop.')
 
         return attrs

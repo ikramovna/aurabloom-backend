@@ -97,8 +97,6 @@ class SavedListCreateAPIView(ListCreateAPIView):
 class ShopFavoriteListCreateAPIView(ListCreateAPIView):
     """
     API endpoint that allows users to create and list their favorite shops.
-
-    Example of request:
     """
     queryset = ShopFavorite.objects.all()
     serializer_class = ShopFavoriteSerializer
@@ -109,29 +107,29 @@ class ShopFavoriteListCreateAPIView(ListCreateAPIView):
         return ShopFavorite.objects.filter(user=user)
 
     def get_likes_count(self, shop):
-        return ShopFavorite.objects.filter(shop=shop, like=True).count()
+        return ShopFavorite.objects.filter(product=shop, like=True).count()
 
     def post(self, request, *args, **kwargs):
-        shop_id = request.data.get('shop')
+        product_id = request.data.get('product')
         user = request.user
         like_value = request.data.get('like', True)
 
         try:
-            shop = Shop.objects.get(id=shop_id)
+            shop = Shop.objects.get(id=product_id)
         except Shop.DoesNotExist:
             return Response({'error': 'Shop not found'}, status=404)
 
         if like_value is False:
-            ShopFavorite.objects.filter(shop=shop, user=user).delete()
+            ShopFavorite.objects.filter(product=shop, user=user).delete()
             return Response({
                 'id': user.id,
-                'shop': shop_id,
+                'product': product_id,
                 'like': False,
                 'message': 'Favorite deleted successfully'
             })
 
         favorite_instance, created = ShopFavorite.objects.get_or_create(
-            shop=shop,
+            product=shop,
             user=user,
             defaults={'like': like_value}
         )
@@ -148,12 +146,9 @@ class ShopFavoriteListCreateAPIView(ListCreateAPIView):
         return Response(response_data)
 
 
-
 class ShopSavedListCreateAPIView(ListCreateAPIView):
     """
     API endpoint that allows users to create and list their saved shops.
-
-    Example of request:
     """
     queryset = ShopSaved.objects.all()
     serializer_class = ShopSavedSerializer
@@ -164,16 +159,17 @@ class ShopSavedListCreateAPIView(ListCreateAPIView):
         return ShopSaved.objects.filter(user=user)
 
     def post(self, request, *args, **kwargs):
-        shop_id = request.data.get('shop')
+        product_id = request.data.get('product')
         user = request.user
         saved_value = request.data.get('saved', True)
 
+        # Handle deletion if saved is set to False
         if saved_value is False:
-            ShopSaved.objects.filter(shop_id=shop_id, user=user).delete()
+            ShopSaved.objects.filter(product_id=product_id, user=user).delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
 
         saved_instance, created = ShopSaved.objects.get_or_create(
-            shop_id=shop_id,
+            product_id=product_id,
             user=user,
             defaults={'saved': saved_value}
         )
