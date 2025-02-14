@@ -1,0 +1,38 @@
+name: PROJECT CI
+
+on: [push]
+
+jobs:
+  run-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:14.8
+        env:
+          POSTGRES_DB: ${{ secrets.DB_NAME }}
+          POSTGRES_USER: ${{ secrets.DB_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+          POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
+        ports:
+          - 5432:5432
+
+    env:
+      DJANGO_SETTINGS_MODULE: root.settings
+      POSTGRES_DB: ${{ secrets.DB_NAME }}
+      POSTGRES_USER: ${{ secrets.DB_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+      POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.10.5
+      - name: Install requirements
+        run: pip3 install -r requirements.txt
+      - name: Run migrations
+        run: python manage.py migrate
+      - name: Run tests
+        run: python manage.py test
