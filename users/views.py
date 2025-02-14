@@ -4,7 +4,8 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from rest_framework import status
-from rest_framework.generics import GenericAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import GenericAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView, ListCreateAPIView, \
+    RetrieveUpdateAPIView
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -13,7 +14,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from root import settings
 from users.models import User, getKey
 from users.serializers import (UserRegisterSerializer, CheckActivationCodeSerializer, ResetPasswordSerializer,
-                               ResetPasswordConfirmSerializer, UserSerializer, UserModelSerializer)
+                               ResetPasswordConfirmSerializer, UserSerializer, UserModelSerializer, BalanceSerializer)
 
 
 class UserRegisterCreateAPIView(CreateAPIView):
@@ -162,3 +163,13 @@ class UserCreateAPIView(CreateAPIView):
     """
     serializer_class = UserModelSerializer
     permission_classes = [IsAuthenticated]
+
+
+class BalanceView(RetrieveUpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = BalanceSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+

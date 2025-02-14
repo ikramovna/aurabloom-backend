@@ -43,7 +43,6 @@ class TimeSerializer(serializers.ModelSerializer):
 
         return attrs
 
-
 class MasterFreeTimeSerializer(serializers.Serializer):
     date = serializers.DateField()
     service_ids = serializers.ListField(child=serializers.IntegerField())
@@ -63,9 +62,6 @@ class MasterFreeTimeSerializer(serializers.Serializer):
                 Service.objects.get(id=service_id)
             except Service.DoesNotExist:
                 raise serializers.ValidationError(f"Service with ID {service_id} not found")
-
-        if date < timezone.now().date():
-            raise serializers.ValidationError("The date cannot be in the past")
 
         day_index = date.weekday()
         days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]

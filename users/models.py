@@ -45,6 +45,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     address = models.ForeignKey('beauty.Address', on_delete=models.CASCADE, related_name='users', blank=True, null=True)
     image = models.ImageField(upload_to='users/', blank=True, null=True)
 
+    card_num = models.BigIntegerField( max_length=16,blank=True, null=True, unique=True)
+    card_exp = models.DateField(blank=True, null=True)
+    card_cvv = models.BigIntegerField( max_length=3,blank=True, null=True, unique=True)
+
     is_master = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)

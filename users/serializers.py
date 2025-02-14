@@ -100,7 +100,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'full_name', 'email', 'phone', 'username', 'bio', 'gender', 'telegram', 'instagram', 'facebook',
-                  'address', 'image', 'is_master']
+                  'address', 'image', 'is_master', 'card_num', 'card_exp', 'card_cvv']
 
     # def get_services(self, user):
     #     services = user.services.all()
@@ -126,10 +126,26 @@ class UserModelSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
+class UserServiceModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'full_name', 'email', 'username', 'image']
 
-class UserServiceModelSerializer(ModelSerializer):
-    address = AddressSerializer(read_only=True)
+
+class BalanceSerializer(serializers.ModelSerializer):
+    card_num = serializers.IntegerField(max_value=9999999999999999)
+    card_exp = serializers.DateField()
+    card_cvv = serializers.IntegerField(max_value=999)
+
+
 
     class Meta:
         model = User
-        fields = ('id', 'full_name', 'address', 'image', 'instagram', 'facebook', 'telegram', 'phone')
+        fields = ('id', 'card_num', 'card_exp', 'card_cvv')
+
+    def update(self, instance, validated_data):
+        instance.card_num = validated_data.get('card_num', instance.card_num)
+        instance.card_exp = validated_data.get('card_exp', instance.card_exp)
+        instance.card_cvv = validated_data.get('card_cvv', instance.card_cvv)
+        instance.save()
+        return instance
