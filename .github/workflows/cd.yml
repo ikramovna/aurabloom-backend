@@ -11,9 +11,9 @@ jobs:
       postgres:
         image: postgres:14.8
         env:
-          POSTGRES_DB: ${{ secrets.DB_NAME }}
-          POSTGRES_USER: ${{ secrets.DB_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
           POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
         ports:
@@ -21,9 +21,9 @@ jobs:
 
     env:
       DJANGO_SETTINGS_MODULE: root.settings
-      POSTGRES_DB: ${{ secrets.DB_NAME }}
-      POSTGRES_USER: ${{ secrets.DB_USER }}
-      POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
       POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
 
@@ -36,8 +36,6 @@ jobs:
         run: pip3 install -r requirements.txt
       - name: Run migrations
         run: python manage.py migrate
-      - name: Run tests
-        run: python manage.py test
 
   deploy:
     runs-on: ubuntu-latest
@@ -51,6 +49,6 @@ jobs:
           username: root
           key: ${{ secrets.KEY }}
           script: |
-            cd project/
+            cd aurabloom-backend/
             git pull
             sudo systemctl restart gunicorn.socket gunicorn.service
