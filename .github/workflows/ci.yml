@@ -1,10 +1,11 @@
-name: PROJECT CI
+name: Django CI/CD Pipeline
 
 on: [push]
 
 jobs:
-  run-test:
+  test:
     runs-on: ubuntu-latest
+
     services:
       postgres:
         image: postgres:14.8
@@ -12,8 +13,6 @@ jobs:
           POSTGRES_DB: ${{ secrets.DB_NAME }}
           POSTGRES_USER: ${{ secrets.DB_USER }}
           POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
-          POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
         ports:
           - 5432:5432
 
@@ -22,8 +21,8 @@ jobs:
       POSTGRES_DB: ${{ secrets.DB_NAME }}
       POSTGRES_USER: ${{ secrets.DB_USER }}
       POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
-      POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
 
     steps:
       - uses: actions/checkout@v2
