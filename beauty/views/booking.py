@@ -105,7 +105,7 @@ class MasterFreeTimeListAPIView(ListAPIView):
         serializer = self.serializer_class(data=query_params)
         serializer.is_valid(raise_exception=True)
         free_times = serializer.get_free_times()
-        return Response(free_times, status=200)
+        return Response({"free_times": free_times}, status=200)
 
 
 class BookingCreateAPIView(CreateAPIView):

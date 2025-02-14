@@ -43,6 +43,8 @@ class TimeSerializer(serializers.ModelSerializer):
 
         return attrs
 
+
+
 class MasterFreeTimeSerializer(serializers.Serializer):
     date = serializers.DateField()
     service_ids = serializers.ListField(child=serializers.IntegerField())
@@ -67,12 +69,12 @@ class MasterFreeTimeSerializer(serializers.Serializer):
         days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
         day = days[day_index]
 
-        for service_id in service_ids:
-            service = Service.objects.get(id=service_id)
-            master_working_time = Time.objects.filter(user=service.user, day__day=day)
-
-            if not master_working_time.exists():
-                raise serializers.ValidationError("The requested date is not a working day for the master")
+        # for service_id in service_ids:
+        #     service = Service.objects.get(id=service_id)
+        #     master_working_time = Time.objects.filter(user=service.user, day__day=day)
+        #
+        #     if not master_working_time.exists():
+        #         raise serializers.ValidationError("The requested date is not a working day for the master")
 
         return attrs
 
