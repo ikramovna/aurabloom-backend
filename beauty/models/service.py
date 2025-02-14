@@ -1,3 +1,4 @@
+from ckeditor.fields import RichTextField
 from django.db.models import *
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
@@ -36,15 +37,25 @@ class Service(Model):
 
 class Shop(Model):
     name = CharField(max_length=255)
-    description = TextField(null=True, blank=True)
+    description = RichTextField(null=True, blank=True)
     image = ImageField(upload_to='shop/')
     image1 = ImageField(upload_to='shop/', null=True, blank=True)
     image2 = ImageField(upload_to='shop/', null=True, blank=True)
     image3 = ImageField(upload_to='shop/', null=True, blank=True)
     price = DecimalField(max_digits=10, decimal_places=2)
     view = IntegerField(default=0)
-    brand = CharField(max_length=255, null=True, blank=True)
     availability = BooleanField(default=True)
+
+
+    contact_number = CharField(max_length=20, null=True, blank=True)
+    additional_info = RichTextField(null=True, blank=True)
+    video = URLField(null=True, blank=True)
+    brand = CharField(max_length=255, null=True, blank=True)
+    weight = DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    size = CharField(max_length=50, null=True, blank=True)
+    grams = IntegerField(null=True, blank=True)
+    color = CharField(max_length=50, null=True, blank=True)
+
 
     class Meta:
         verbose_name = 'Shop'

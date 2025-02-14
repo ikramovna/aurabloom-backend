@@ -85,7 +85,7 @@ class AboutImageModelAdmin(ImportExportModelAdmin):
 
 @admin.register(Shop)
 class ShopModelAdmin(ImportExportModelAdmin):
-    list_display = ("id", "name", "price", "description", "image")
+    list_display = ("id", "name", "price", "description", "availability", "view")
     ordering = ("id",)
 
 

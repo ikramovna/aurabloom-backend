@@ -61,19 +61,31 @@ class ShopModelSerializer(ModelSerializer):
 
     class Meta:
         model = Shop
-        fields = ('id', 'name', 'price', 'image', 'like_count', 'view')
+        fields = ('id', 'name', 'price', 'image', 'like_count', 'view', 'brand')
 
     def get_like_count(self, obj):
         return ShopFavorite.objects.filter(product=obj).count()
 
 
-class ShopDetailModelSerializer(ModelSerializer):
+
+class ShopDetailModelSerializer(serializers.ModelSerializer):
+    additional_item = serializers.SerializerMethodField()
+
     class Meta:
         model = Shop
         fields = (
-            'id', 'name', 'price', 'description', 'image', 'image1', 'image2', 'image3', 'brand', 'availability',
-            'view')
+            'id', 'name', 'price', 'description', 'image', 'image1', 'image2', 'image3',  'availability',
+            'view', 'additional_info', 'video', 'contact_number' ,'additional_item'
+        )
 
+    def get_additional_item(self, obj):
+        return {
+            'brand': obj.brand,
+            'weight': obj.weight,
+            'size': obj.size,
+            'grams': obj.grams,
+            'color': obj.color
+        }
 
 class BlogDetailModelSerializer(ModelSerializer):
     class Meta:
