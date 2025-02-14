@@ -125,7 +125,6 @@ class BookingUpdateAPIView(UpdateAPIView, DestroyAPIView):
 
     Example request:
     # pending approved rejected
-
     """
     queryset = Booking.objects.all()
     serializer_class = BookingUpdateSerializer

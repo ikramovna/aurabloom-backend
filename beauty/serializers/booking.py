@@ -45,6 +45,11 @@ class TimeSerializer(serializers.ModelSerializer):
 
 
 
+from rest_framework import serializers
+from django.utils import timezone
+from beauty.models.service import Service
+from beauty.models.booking import Time, WorkingDays
+
 class MasterFreeTimeSerializer(serializers.Serializer):
     date = serializers.DateField()
     service_ids = serializers.ListField(child=serializers.IntegerField())
@@ -69,13 +74,12 @@ class MasterFreeTimeSerializer(serializers.Serializer):
         days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
         day = days[day_index]
 
-        # for service_id in service_ids:
-        #     service = Service.objects.get(id=service_id)
-        #     master_working_time = Time.objects.filter(user=service.user, day__day=day)
-        #
-        #     if not master_working_time.exists():
-        #         raise serializers.ValidationError("The requested date is not a working day for the master")
+        for service_id in service_ids:
+            service = Service.objects.get(id=service_id)
+            master_working_time = Time.objects.filter(user=service.user, day=day_index)
 
+            if not master_working_time.exists():
+                raise serializers.ValidationError("The requested date is not a working day for the master")
         return attrs
 
     def get_free_times(self):
@@ -138,21 +142,6 @@ class BookingSerializer(serializers.ModelSerializer):
         current_date = timezone.now().date()
         current_time = timezone.now().time()
 
-        for service_id in service_ids:
-            if not Service.objects.filter(pk=service_id).exists():
-                raise serializers.ValidationError(f"Service with ID {service_id} does not exist")
-
-        day_index = date.weekday()
-        days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-        day = days[day_index]
-
-        for service_id in service_ids:
-            service = Service.objects.get(id=service_id)
-            master_working_time = Time.objects.filter(user=service.user, day__day=day)
-
-            if not master_working_time.exists():
-                raise serializers.ValidationError("The requested date is not a working day for the master")
-
         if not service_ids:
             raise serializers.ValidationError({"service_ids": ["At least one service must be selected"]})
         if not all(isinstance(service_id, int) for service_id in service_ids):
@@ -170,6 +159,12 @@ class BookingSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("The date cannot be in the past")
         if date == current_date and datetime.strptime(time, "%H:%M").time() < current_time:
             raise serializers.ValidationError("The time cannot be in the past")
+
+        day_index = date.weekday()
+        for service in services:
+            master_working_time = Time.objects.filter(user=service.user, day=day_index)
+            if not master_working_time.exists():
+                raise serializers.ValidationError("The requested date is not a working day for the master")
 
         return attrs
 
