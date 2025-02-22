@@ -49,7 +49,7 @@ class Shop(Model):
 
     contact_number = CharField(max_length=20, null=True, blank=True)
     additional_info = RichTextField(null=True, blank=True)
-    video = URLField(null=True, blank=True)
+    video = ImageField(upload_to='shop/', null=True, blank=True)
     brand = CharField(max_length=255, null=True, blank=True)
     weight = DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     size = CharField(max_length=50, null=True, blank=True)
