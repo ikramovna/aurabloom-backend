@@ -20,7 +20,7 @@ urlpatterns = [
     path("saved", SavedListCreateAPIView.as_view()),
     path("service", ServiceCreateAPIView.as_view()),
     path("service/list", ServiceListAPIView.as_view()),
-    path("service/<int:pk>", ServiceRetrieveUpdateDestroyAPIView.as_view()),
+    path("service/<int:pk>", ServiceRetrieveUpdateDestroyAPIView.as_view(), name="service-detail"),
     path("working/day", WorkingDayListAPIView.as_view()),
     path("working/time", TimeListCreateAPIView.as_view()),
     path("working/time/<int:pk>", TimeUpdateDestroyAPIView.as_view()),

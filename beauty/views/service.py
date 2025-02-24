@@ -81,18 +81,22 @@ class ServiceListAPIView(ListAPIView):
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter('user_id', openapi.IN_QUERY, type=openapi.TYPE_INTEGER),
-            openapi.Parameter('category_id', openapi.IN_QUERY, type=openapi.TYPE_INTEGER)
+            openapi.Parameter('category_id', openapi.IN_QUERY, type=openapi.TYPE_INTEGER),
+            openapi.Parameter('id', openapi.IN_QUERY, type=openapi.TYPE_INTEGER)
         ]
     )
     def get(self, request, *args, **kwargs):
         user_id = self.request.query_params.get('user_id')
         category_id = self.request.query_params.get('category_id')
+        id = self.request.query_params.get('id')
         if user_id and category_id:
             self.queryset = Service.objects.filter(user_id=user_id, category_id=category_id)
         elif user_id:
             self.queryset = Service.objects.filter(user_id=user_id)
         elif category_id:
             self.queryset = Service.objects.filter(category_id=category_id)
+        elif id:
+            self.queryset = Service.objects.filter(id=id)
         else:
             self.queryset = Service.objects.all()
         return super().get(request, *args, **kwargs)
@@ -107,7 +111,7 @@ class ServiceRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Service.objects.all()
     serializer_class = ServiceModelSerializer
     parser_classes = (MultiPartParser, FormParser)
-    http_method_names = ['get', 'put', 'delete']
+    # http_method_names = ['get', 'put', 'delete']
 
     def get_queryset(self):
         if self.request.user.is_authenticated:
