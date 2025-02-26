@@ -61,7 +61,7 @@ class ShopModelSerializer(ModelSerializer):
 
     class Meta:
         model = Shop
-        fields = ('id', 'name', 'price', 'image', 'like_count', 'view', 'brand')
+        fields = ('id', 'name', 'price', 'image', 'like_count', 'view', 'brand', 'discount')
 
     def get_like_count(self, obj):
         return ShopFavorite.objects.filter(product=obj).count()
@@ -74,7 +74,7 @@ class ShopDetailModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Shop
         fields = (
-            'id', 'name', 'price', 'description', 'image', 'image1', 'image2', 'image3',  'availability',
+            'id', 'name', 'price', 'discount' ,'description', 'image', 'image1', 'image2', 'image3',  'availability',
             'view', 'additional_info', 'video', 'contact_number' ,'additional_item'
         )
 

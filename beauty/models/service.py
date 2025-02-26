@@ -43,8 +43,10 @@ class Shop(Model):
     image2 = ImageField(upload_to='shop/', null=True, blank=True)
     image3 = ImageField(upload_to='shop/', null=True, blank=True)
     price = DecimalField(max_digits=10, decimal_places=2)
+    discount = DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     view = IntegerField(default=0)
     availability = BooleanField(default=True)
+
 
 
     contact_number = CharField(max_length=20, null=True, blank=True)

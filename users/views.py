@@ -1,20 +1,24 @@
 import random
 
-from django.core.mail import EmailMultiAlternatives
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.mail import EmailMultiAlternatives, send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from rest_framework import status
 from rest_framework.generics import GenericAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView, ListCreateAPIView, \
     RetrieveUpdateAPIView
+from rest_framework.mixins import CreateModelMixin
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from root import settings
 from users.models import User, getKey
 from users.serializers import (UserRegisterSerializer, CheckActivationCodeSerializer, ResetPasswordSerializer,
-                               ResetPasswordConfirmSerializer, UserSerializer, UserModelSerializer, BalanceSerializer)
+                               ResetPasswordConfirmSerializer, UserSerializer, UserModelSerializer, BalanceSerializer,
+                               SendVerificationCodeSerializer, CheckActivationCodePaySerializer)
 
 
 class UserRegisterCreateAPIView(CreateAPIView):
@@ -173,3 +177,36 @@ class BalanceView(RetrieveUpdateAPIView):
     def get_object(self):
         return self.request.user
 
+
+class SendVerificationCodeAPIView(CreateModelMixin, GenericAPIView):
+    serializer_class = SendVerificationCodeSerializer
+    # permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
+
+
+class CheckActivationCodePayAPIView(GenericAPIView):
+    serializer_class = CheckActivationCodePaySerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            data = serializer.validated_data
+            user_data = getKey(key=data['email'])
+
+            if user_data and 'user' in user_data and user_data['activate_code'] == data['activate_code']:
+                user = user_data['user']
+                user.is_active = True
+                user.save()
+                return Response({
+                    "message": "Your email has been confirmed",
+                }, status=status.HTTP_200_OK)
+            else:
+                return Response({
+                    "message": "Invalid activation code or email",
+                }, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

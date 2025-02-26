@@ -2,6 +2,7 @@ import random
 
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
+from django.core.cache import cache
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
@@ -11,7 +12,7 @@ from rest_framework.serializers import ModelSerializer
 from beauty.models.region import Address
 from beauty.serializers.region import AddressSerializer
 from users.models import User, getKey, setKey
-
+import json
 
 class UserRegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=150, write_only=True)
@@ -126,6 +127,7 @@ class UserModelSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
+
 class UserServiceModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -137,8 +139,6 @@ class BalanceSerializer(serializers.ModelSerializer):
     card_exp = serializers.DateField()
     card_cvv = serializers.IntegerField(max_value=999)
 
-
-
     class Meta:
         model = User
         fields = ('id', 'card_num', 'card_exp', 'card_cvv')
@@ -149,3 +149,49 @@ class BalanceSerializer(serializers.ModelSerializer):
         instance.card_cvv = validated_data.get('card_cvv', instance.card_cvv)
         instance.save()
         return instance
+
+
+from rest_framework import serializers
+
+class SendVerificationCodeSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+    def create(self, validated_data):
+        email = validated_data['email']
+        verification_code = self.generate_verification_code()
+
+        # Save the activation code to the cache
+        cache.set(email, verification_code, timeout=600)  # Cache for 10 minutes
+
+        html_content = render_to_string('activation_payment.html',
+                                        {'activate_code': verification_code, 'user': {'full_name': 'User'}})
+        text_content = strip_tags(html_content)
+
+        subject = 'Your Verification Code'
+        from_email = 'from@example.com'
+        msg = EmailMultiAlternatives(subject, text_content, from_email, [email])
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
+
+        return validated_data
+
+    def generate_verification_code(self):
+        return str(random.randint(100000, 999999))
+
+
+class CheckActivationCodePaySerializer(serializers.Serializer):
+    import json
+
+    class CheckActivationCodePaySerializer(serializers.Serializer):
+        email = serializers.EmailField()
+        activate_code = serializers.CharField(max_length=6)
+
+        def validate(self, attrs):
+            data = getKey(key=attrs['email'])
+            if data:
+                data = json.loads(data)  # Parse the JSON string into a dictionary
+                if data['activate_code'] == attrs['activate_code']:
+                    return attrs
+            raise serializers.ValidationError(
+                {"error": "Error activate code or email"}
+            )

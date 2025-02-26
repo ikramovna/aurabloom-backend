@@ -111,6 +111,7 @@ class ServiceRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Service.objects.all()
     serializer_class = ServiceModelSerializer
     parser_classes = (MultiPartParser, FormParser)
+
     # http_method_names = ['get', 'put', 'delete']
 
     def get_queryset(self):
