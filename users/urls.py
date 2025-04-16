@@ -3,7 +3,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from users.views import (UserRegisterCreateAPIView, CheckActivationCodeGenericAPIView, ResetPasswordView,
                          ResetPasswordConfirmView, UserUpdateView, UserCreateAPIView, BalanceView,
-                         SendVerificationCodeAPIView, CheckActivationCodePayAPIView)
+                         SendVerificationCodeAPIView,)
 
 urlpatterns = [
     path('register', UserRegisterCreateAPIView.as_view()),
@@ -16,5 +16,5 @@ urlpatterns = [
     path('profile', UserUpdateView.as_view(), name='user-update'),
     path('balance', BalanceView.as_view(), name='user-update'),
     path("send-verification-code", SendVerificationCodeAPIView.as_view(), name="send-verification-code"),
-    path("check-verification-code", CheckActivationCodePayAPIView.as_view(), name="check-activation-code"),
+    # path("check-verification-code", CheckActivationCodePayAPIView.as_view(), name="check-activation-code"),
 ]

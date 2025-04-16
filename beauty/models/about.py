@@ -38,3 +38,9 @@ class About(Model):
 
     def __str__(self):
         return self.title
+
+class Contact(Model):
+    full_name = CharField(max_length=255)
+    email = EmailField()
+    phone_number = CharField(max_length=255)
+    message = TextField()

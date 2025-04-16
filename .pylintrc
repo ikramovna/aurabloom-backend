@@ -1,0 +1,22 @@
+[REPORTS]
+score=no
+
+[MESSAGES CONTROL]
+disable=C0114, C0115, C0116, C0301, C0304, R0903, W0611, W0613, R1705, no-member, C0411, C0412, C0103
+
+[FORMAT]
+max-line-length=120
+
+[BASIC]
+good-names=i,j,k,e,x,_,pk,id
+
+[DESIGN]
+max-args=10
+max-locals=15
+max-returns=6
+max-branches=12
+max-statements=50
+
+[TYPECHECK]
+ignored-modules=django.db.models
+ignored-classes=QuerySet,Manager

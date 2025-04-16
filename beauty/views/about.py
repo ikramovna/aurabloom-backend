@@ -1,13 +1,13 @@
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from beauty.models.about import Faq, About
 from beauty.models.service import Service
-from beauty.serializers.about import AboutModelSerializer, FaqModelSerializer
+from beauty.serializers.about import AboutModelSerializer, FaqModelSerializer, ContactModelSerializer
 from beauty.serializers.service import ServiceListSerializer
 
 
@@ -47,3 +47,11 @@ class SearchServiceByNameView(ListAPIView):
         queryset = Service.objects.filter(name__icontains=name_query)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class ContactCreateAPIView(CreateAPIView):
+    serializer_class = ContactModelSerializer
+    permission_classes = [AllowAny]
+
+    @swagger_auto_schema(operation_description="Contact Us")
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)

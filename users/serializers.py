@@ -2,17 +2,15 @@ import random
 
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
-from django.core.cache import cache
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from rest_framework import serializers
-from rest_framework.serializers import ModelSerializer
 
 from beauty.models.region import Address
 from beauty.serializers.region import AddressSerializer
 from users.models import User, getKey, setKey
-import json
+
 
 class UserRegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=150, write_only=True)
@@ -151,7 +149,7 @@ class BalanceSerializer(serializers.ModelSerializer):
         return instance
 
 
-from rest_framework import serializers
+import json
 
 class SendVerificationCodeSerializer(serializers.Serializer):
     email = serializers.EmailField()
@@ -160,8 +158,12 @@ class SendVerificationCodeSerializer(serializers.Serializer):
         email = validated_data['email']
         verification_code = self.generate_verification_code()
 
-        # Save the activation code to the cache
-        cache.set(email, verification_code, timeout=600)  # Cache for 10 minutes
+        # Save the activation code using setKey
+        setKey(
+            key=email,
+            value=json.dumps({"activate_code": verification_code}),
+            timeout=600  # Cache for 10 minutes
+        )
 
         html_content = render_to_string('activation_payment.html',
                                         {'activate_code': verification_code, 'user': {'full_name': 'User'}})
@@ -177,21 +179,3 @@ class SendVerificationCodeSerializer(serializers.Serializer):
 
     def generate_verification_code(self):
         return str(random.randint(100000, 999999))
-
-
-class CheckActivationCodePaySerializer(serializers.Serializer):
-    import json
-
-    class CheckActivationCodePaySerializer(serializers.Serializer):
-        email = serializers.EmailField()
-        activate_code = serializers.CharField(max_length=6)
-
-        def validate(self, attrs):
-            data = getKey(key=attrs['email'])
-            if data:
-                data = json.loads(data)  # Parse the JSON string into a dictionary
-                if data['activate_code'] == attrs['activate_code']:
-                    return attrs
-            raise serializers.ValidationError(
-                {"error": "Error activate code or email"}
-            )

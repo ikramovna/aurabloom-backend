@@ -1,11 +1,6 @@
-from datetime import timedelta
-
-from django.utils.timezone import now
-from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ModelSerializer
 
-from beauty.models.about import Faq, About, AboutImage
-from beauty.models.service import Service
+from beauty.models.about import Faq, About, AboutImage, Contact
 
 
 class FaqModelSerializer(ModelSerializer):
@@ -28,5 +23,7 @@ class AboutModelSerializer(ModelSerializer):
         fields = ('id', 'title', 'description', 'image')
 
 
-
-
+class ContactModelSerializer(ModelSerializer):
+    class Meta:
+        model = Contact
+        fields = ('id', 'full_name', 'email', 'phone_number', 'message')

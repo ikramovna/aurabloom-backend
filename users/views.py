@@ -1,24 +1,19 @@
 import random
 
-from django.core.exceptions import ObjectDoesNotExist
-from django.core.mail import EmailMultiAlternatives, send_mail
+from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from rest_framework import status
-from rest_framework.generics import GenericAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView, ListCreateAPIView, \
-    RetrieveUpdateAPIView
-from rest_framework.mixins import CreateModelMixin
-from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.generics import GenericAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveUpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from root import settings
 from users.models import User, getKey
 from users.serializers import (UserRegisterSerializer, CheckActivationCodeSerializer, ResetPasswordSerializer,
                                ResetPasswordConfirmSerializer, UserSerializer, UserModelSerializer, BalanceSerializer,
-                               SendVerificationCodeSerializer, CheckActivationCodePaySerializer)
+                               SendVerificationCodeSerializer)
 
 
 class UserRegisterCreateAPIView(CreateAPIView):
@@ -178,35 +173,35 @@ class BalanceView(RetrieveUpdateAPIView):
         return self.request.user
 
 
-class SendVerificationCodeAPIView(CreateModelMixin, GenericAPIView):
+class SendVerificationCodeAPIView(CreateAPIView):
     serializer_class = SendVerificationCodeSerializer
-    # permission_classes = [IsAuthenticated]
 
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
-
-
-
-
-class CheckActivationCodePayAPIView(GenericAPIView):
-    serializer_class = CheckActivationCodePaySerializer
-
-    def post(self, request, *args, **kwargs):
+    def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            data = serializer.validated_data
-            user_data = getKey(key=data['email'])
+            email = serializer.validated_data['email']
+            try:
+                user = User.objects.get(email=email)
+            except User.DoesNotExist:
+                return Response({"detail": "User not found with this email."}, status=status.HTTP_400_BAD_REQUEST)
 
-            if user_data and 'user' in user_data and user_data['activate_code'] == data['activate_code']:
-                user = user_data['user']
-                user.is_active = True
-                user.save()
-                return Response({
-                    "message": "Your email has been confirmed",
-                }, status=status.HTTP_200_OK)
-            else:
-                return Response({
-                    "message": "Invalid activation code or email",
-                }, status=status.HTTP_400_BAD_REQUEST)
+            activation_code = str(random.randint(100000, 999999))
+
+            # Send email with activation code
+            subject = "Activation Code"
+            html_content = render_to_string('activation_payment.html', {'activation_code': activation_code})
+            text_content = strip_tags(html_content)
+
+            from_email = f"Aura Team <{settings.EMAIL_HOST_USER}>"
+            email = EmailMultiAlternatives(
+                subject=subject,
+                body=text_content,
+                from_email=from_email,
+                to=[email]
+            )
+            email.attach_alternative(html_content, "text/html")
+            email.send()
+
+            return Response({"detail": "Activation code sent to your email."}, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -1,6 +1,6 @@
 from django.urls import path
 
-from beauty.views.about import FaqAPIView, AboutAPIView, SearchServiceByNameView
+from beauty.views.about import FaqAPIView, AboutAPIView, SearchServiceByNameView, ContactCreateAPIView
 from beauty.views.booking import (TimeListCreateAPIView, TimeUpdateDestroyAPIView, MasterFreeTimeListAPIView,
                                   BookingCreateAPIView, WorkingDayListAPIView, MyBookingListAPIView,
                                   BookingUpdateAPIView)
@@ -38,5 +38,6 @@ urlpatterns = [
     path("blog", BlogListAPIView.as_view()),
     path("blog/<int:pk>", BlogRetrieveApiView.as_view()),
     path("search", SearchServiceByNameView.as_view()),
+    path("contact", ContactCreateAPIView.as_view()),
 
 ]
