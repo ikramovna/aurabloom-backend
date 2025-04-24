@@ -4,8 +4,7 @@ from django.utils import timezone
 from rest_framework.test import APITestCase
 
 from beauty.models.about import Faq, About, AboutImage, Contact
-from beauty.models.booking import Time, Booking, WorkingDays
-from beauty.models.service import Service
+from beauty.models.booking import Booking, WorkingDays
 from beauty.serializers.about import (
     FaqModelSerializer,
     AboutImageModelSerializer,
@@ -14,11 +13,7 @@ from beauty.serializers.about import (
 )
 from beauty.serializers.booking import (
     WorkingDaySerializer,
-    TimeSerializer,
-    MasterFreeTimeSerializer,
-    BookingSerializer,
     BookingUpdateSerializer,
-    MyBookingSerializer,
 )
 from users.models import User
 
@@ -114,4 +109,3 @@ class BookingUpdateSerializerTest(APITestCase):
         self.assertTrue(serializer.is_valid())
         updated_booking = serializer.update(self.booking, serializer.validated_data)
         self.assertEqual(updated_booking.status, Booking.StatusChoices.APPROVED)
-
